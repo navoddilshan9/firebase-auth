@@ -52,11 +52,12 @@ function App() {
   const forgetPassord = async () => {
     setIsforget(true)
     if (resetEmail != null) {
-      sendPasswordResetEmail(auth, resetEmail).then((a) => {
-        console.log(a)
+      await sendPasswordResetEmail(auth, resetEmail).then((res) => {
+        console.log(res)
+        alert('email is sent to your email')
       })
-      alert('email is sent to your email')
     }
+
     console.log(resetEmail)
   }
   return (
