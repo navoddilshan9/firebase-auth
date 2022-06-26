@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import * as yup from 'yup'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -6,7 +7,10 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from 'firebase/auth'
+import { userSchema } from './validation/userValidation'
 import { auth } from './firebase/config'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 import './App.css'
 
 function App() {
@@ -21,12 +25,20 @@ function App() {
   // onAuthStateChanged(auth, (currentUser) => {
   //   setUser(currentUser)
   // })
-  const register = async () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(userSchema),
+  })
+  const submitForm = async (data) => {
+    console.log(data.email)
     try {
       const user = await createUserWithEmailAndPassword(
         auth,
-        registerEmail,
-        registerPassword
+        data.email,
+        data.password
       )
       console.log(user)
       alert('Signup successfully')
@@ -37,11 +49,7 @@ function App() {
   }
   const login = async () => {
     try {
-      const user = await signInWithEmailAndPassword(
-        auth,
-        loginEmail,
-        loginPassword
-      )
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
 
       alert('loggedin')
     } catch (error) {
@@ -61,47 +69,52 @@ function App() {
           alert('email is sent to your email')
         })
         .catch((error) => {
-          const errorCode = error.code
-          const errorMessage = error.message
           alert('Error')
         })
     }
   }
   return (
     <div className='App'>
-      <div>
+      <form onSubmit={handleSubmit(submitForm)}>
         <h3> Register User </h3>
         <input
           placeholder='Email...'
-          onChange={(event) => {
-            setRegisterEmail(event.target.value)
-          }}
+          {...register('email', {
+            required: 'Required',
+          })}
+          name='email'
         />
+        <br />
+        <p> {errors.email && errors.email?.message}</p>
         <input
           placeholder='Password...'
-          onChange={(event) => {
-            setRegisterPassword(event.target.value)
-          }}
+          {...register('password', {
+            required: 'Required',
+          })}
+          name='password'
         />
-
-        <button onClick={register}> Create User</button>
-      </div>
+        <p> {errors.password && errors.password?.message}</p>
+        <button type='submit'> Create User</button>
+      </form>
 
       <div>
         <h3> Login </h3>
         <input
           placeholder='Email...'
+          name='email'
           onChange={(event) => {
             setLoginEmail(event.target.value)
           }}
         />
+        {/* <p> {errors.email?.message} </p> */}
         <input
           placeholder='Password...'
+          name='password'
           onChange={(event) => {
             setLoginPassword(event.target.value)
           }}
         />
-
+        {/* <p> {errors.password?.message} </p> */}
         <button onClick={login}> Login</button>
       </div>
 
