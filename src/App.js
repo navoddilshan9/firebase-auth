@@ -41,8 +41,9 @@ function App() {
         loginPassword
       )
       console.log(user)
+      alert('loggedin')
     } catch (error) {
-      console.log(error.message)
+      console.log(error)
     }
   }
   const logout = async () => {
@@ -52,10 +53,15 @@ function App() {
   const forgetPassord = async () => {
     setIsforget(true)
     if (resetEmail != null) {
-      await sendPasswordResetEmail(auth, resetEmail).then((res) => {
-        console.log(res)
-        alert('email is sent to your email')
-      })
+      sendPasswordResetEmail(auth, resetEmail)
+        .then(() => {
+          alert('email is sent to your email')
+        })
+        .catch((error) => {
+          const errorCode = error.code
+          const errorMessage = error.message
+          console.log(errorMessage)
+        })
     }
 
     console.log(resetEmail)

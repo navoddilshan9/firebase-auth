@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyASOqhXbSwAeCAd62YmyWI7NcvtNH9wSnQ',
-  authDomain: 'auth-dev-5cce6.firebaseapp.com',
-  projectId: 'auth-dev-5cce6',
-  storageBucket: 'auth-dev-5cce6.appspot.com',
-  messagingSenderId: '795056018837',
-  appId: '1:795056018837:web:c1096033a8c4751d1dd29c',
+  apiKey: 'AIzaSyAmqQYY8JKh7GZHtK2tPu8rAPHiaYXBZFY',
+  authDomain: 'auth-dev-eead0.firebaseapp.com',
+  projectId: 'auth-dev-eead0',
+  storageBucket: 'auth-dev-eead0.appspot.com',
+  messagingSenderId: '665049177996',
+  appId: '1:665049177996:web:71ed6616c5df3ed61200a9',
 }
 
 const app = initializeApp(firebaseConfig)
