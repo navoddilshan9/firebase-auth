@@ -29,8 +29,10 @@ function App() {
         registerPassword
       )
       console.log(user)
+      alert('Signup successfully')
     } catch (error) {
       console.log(error.message)
+      alert('Error')
     }
   }
   const login = async () => {
@@ -40,10 +42,11 @@ function App() {
         loginEmail,
         loginPassword
       )
-      console.log(user)
+
       alert('loggedin')
     } catch (error) {
       console.log(error)
+      alert('Error')
     }
   }
   const logout = async () => {
@@ -60,11 +63,9 @@ function App() {
         .catch((error) => {
           const errorCode = error.code
           const errorMessage = error.message
-          console.log(errorMessage)
+          alert('Error')
         })
     }
-
-    console.log(resetEmail)
   }
   return (
     <div className='App'>
