@@ -7,10 +7,12 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from 'firebase/auth'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { userSchema } from './validation/userValidation'
 import { auth } from './firebase/config'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { storage } from './firebase/config'
 import './App.css'
 
 function App() {
@@ -21,7 +23,7 @@ function App() {
   const [resetEmail, setResetEmail] = useState(null)
   const [isForget, setIsforget] = useState(false)
   const [user, setUser] = useState({})
-
+  const [pogress, setPogress] = useState(0)
   // onAuthStateChanged(auth, (currentUser) => {
   //   setUser(currentUser)
   // })
@@ -73,6 +75,32 @@ function App() {
         })
     }
   }
+  const uploadImage = (e) => {
+    e.preventDefault()
+    const file = e.target[0].files[0]
+    // console.log(file)
+    fileUpload(file)
+  }
+  const fileUpload = (file) => {
+    if (!file) return
+    const storageRef = ref(storage, `/files/${file}`)
+    const uploadTask = uploadBytesResumable(storageRef, file)
+    uploadTask.on(
+      'state shanged',
+      (snapshot) => {
+        const prog = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        )
+        setPogress(prog)
+      },
+      (err) => console.log(err),
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          console.log(url)
+        })
+      }
+    )
+  }
   return (
     <div className='App'>
       <form onSubmit={handleSubmit(submitForm)}>
@@ -117,7 +145,18 @@ function App() {
         {/* <p> {errors.password?.message} </p> */}
         <button onClick={login}> Login</button>
       </div>
-
+      <form onSubmit={uploadImage} name='form1'>
+        <input
+          placeholder='image...'
+          name='uploadBox'
+          type='file'
+          onChange={(event) => {
+            setLoginPassword(event.target.value)
+          }}
+        />
+        <h3>Progress {pogress}%</h3>
+        <button type='submit'> upload</button>
+      </form>
       <h4> User Logged In: </h4>
       {user?.email}
 
