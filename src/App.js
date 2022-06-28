@@ -7,7 +7,12 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from 'firebase/auth'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from 'firebase/storage'
 import { userSchema } from './validation/userValidation'
 import { auth } from './firebase/config'
 import { useForm } from 'react-hook-form'
@@ -24,6 +29,7 @@ function App() {
   const [isForget, setIsforget] = useState(false)
   const [user, setUser] = useState({})
   const [pogress, setPogress] = useState(0)
+  const [image, setImage] = useState('')
   // onAuthStateChanged(auth, (currentUser) => {
   //   setUser(currentUser)
   // })
@@ -75,31 +81,47 @@ function App() {
         })
     }
   }
-  const uploadImage = (e) => {
-    e.preventDefault()
-    const file = e.target[0].files[0]
-    // console.log(file)
-    fileUpload(file)
+  const handlieChnage = (e) => {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0])
+    }
+    console.log(e.target.files[0])
   }
-  const fileUpload = (file) => {
-    if (!file) return
-    const storageRef = ref(storage, `/files/${file}`)
-    const uploadTask = uploadBytesResumable(storageRef, file)
-    uploadTask.on(
-      'state shanged',
-      (snapshot) => {
-        const prog = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        )
-        setPogress(prog)
-      },
-      (err) => console.log(err),
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          console.log(url)
-        })
-      }
-    )
+
+  const fileUpload = (e) => {
+    e.preventDefault()
+    const storageRef = ref(storage, `files/` + image.name)
+
+    uploadBytes(storageRef, image)
+      .then((snapshot) => {
+        console.log(snapshot)
+        getDownloadURL(storageRef)
+          .then((url) => {
+            console.log(url)
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
+    // uploadTask.on(
+    //   'state shanged',
+    //   (snapshot) => {
+    //     const prog = Math.round(
+    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    //     )
+    //     setPogress(prog)
+    //   },
+    //   (err) => console.log(err),
+    //   () => {
+    //     getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+    //       console.log(url)
+    //     })
+    //   }
+    // )
   }
   return (
     <div className='App'>
@@ -145,16 +167,14 @@ function App() {
         {/* <p> {errors.password?.message} </p> */}
         <button onClick={login}> Login</button>
       </div>
-      <form onSubmit={uploadImage} name='form1'>
+      <form onSubmit={fileUpload} name='form1'>
         <input
           placeholder='image...'
           name='uploadBox'
           type='file'
-          onChange={(event) => {
-            setLoginPassword(event.target.value)
-          }}
+          onChange={handlieChnage}
         />
-        <h3>Progress {pogress}%</h3>
+        {/* <h3>Progress {pogress}%</h3> */}
         <button type='submit'> upload</button>
       </form>
       <h4> User Logged In: </h4>
