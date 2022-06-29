@@ -169,7 +169,7 @@ function App() {
         {isForget ? (
           <>
             <input
-              placeholder='Email to rest...'
+              placeholder='Email to rest.'
               onChange={(event) => {
                 setResetEmail(event.target.value)
               }}
