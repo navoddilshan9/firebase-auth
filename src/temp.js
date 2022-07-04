@@ -25,7 +25,7 @@ function App() {
   const [registerPassword, setRegisterPassword] = useState('')
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
-  const [resetEmail, setResetEmail] = useState(null)
+  const [resetEmail, setResetEmail] = useState(false)
   const [isForget, setIsforget] = useState(true)
   const [user, setUser] = useState({})
   const [pogress, setPogress] = useState(0)
